@@ -54,7 +54,7 @@ function init() {
 function initAudio() {
   mAudioElement.crossOrigin = "anonymous";
   mAudioElement.src =
-    "https://raw.githubusercontent.com/DouglasKyrius/three.js-audiovisualizer/master/dist/_audio/boyfriend.mp3";
+    "https://raw.githubusercontent.com/DouglasKyrius/three.js-audiovisualizer/master/dist/_audio/boyfriend2mb.mp3";
 
   mAnalyser = new SpectrumAnalyzer(mPathLength * 0.5, 0.8);
   mAnalyser.setSource(mAudioElement);
