@@ -50,10 +50,11 @@ function init() {
   requestAnimationFrame(tick);
   window.addEventListener("resize", resize, false);
 }
-// https://github.com/DouglasKyrius/three.js-audiovisualizer/tree/master/src/_audio
+// https://github.com/DouglasKyrius/three.js-audiovisualizer/blob/master/dist/_audio/boyfriend.mp3
 function initAudio() {
   mAudioElement.crossOrigin = "anonymous";
-  mAudioElement.src = "./_audio/boyfriend.mp3";
+  mAudioElement.src =
+    "https://raw.githubusercontent.com/DouglasKyrius/three.js-audiovisualizer/master/dist/_audio/boyfriend.mp3";
 
   mAnalyser = new SpectrumAnalyzer(mPathLength * 0.5, 0.8);
   mAnalyser.setSource(mAudioElement);
