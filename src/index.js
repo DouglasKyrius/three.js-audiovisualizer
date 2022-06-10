@@ -53,8 +53,7 @@ function init() {
 // https://github.com/DouglasKyrius/three.js-audiovisualizer/tree/master/src/_audio
 function initAudio() {
   mAudioElement.crossOrigin = "anonymous";
-  mAudioElement.src =
-    "https://raw.githubusercontent.com/DouglasKyrius/three.js-audiovisualizer/master/src/_audio/donadomeupensamento.mp3";
+  mAudioElement.src = "./_audio/boyfriend.mp3";
 
   mAnalyser = new SpectrumAnalyzer(mPathLength * 0.5, 0.8);
   mAnalyser.setSource(mAudioElement);
