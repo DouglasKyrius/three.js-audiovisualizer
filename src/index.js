@@ -2,7 +2,7 @@ var mContainer;
 var mCamera, mRenderer;
 var mControls;
 
-var mShadowColor = 0x13091B; //0x1B0914
+var mShadowColor = 0x13091b; //0x1B0914
 
 var mScene;
 var mLight;
@@ -10,34 +10,32 @@ var mLight2;
 var mLight3;
 
 var mUseAA = true;
-var mParticleCount = 250000;
+var mParticleCount = 100 * 100 * 100; // 250 Thousand
 var mParticleSystem;
 
 var mDuration;
 var mPathLength = 32;
 
-var mAudioElement = document.getElementById('song');
+var mAudioElement = document.getElementById("song");
 var mAnalyser;
 
-var mPlayBtn = document.querySelector('.play-btn');
-var mPlayBtnContainer = document.querySelector('.container');
+var mPlayBtn = document.querySelector(".play-btn");
+var mPlayBtnContainer = document.querySelector(".container");
 
-mPlayBtn.addEventListener('click', function() {
-	
-	mAnalyser.context.resume().then(() => {
-    console.log('Playback resumed successfully');
+mPlayBtn.addEventListener("click", function () {
+  mAnalyser.context.resume().then(() => {
+    console.log("Playback resumed successfully");
   });
-	
-	mPlayBtnContainer.style.display = 'none';
-	mAudioElement.currentTime = 0;
-	mAudioElement.play();
-	
-	mCamera.position.set(0, 0, 1200);
-});
-mAudioElement.addEventListener('ended', function() {
-		mPlayBtnContainer.style.display = 'flex';
-})
 
+  mPlayBtnContainer.style.display = "none";
+  mAudioElement.currentTime = 0;
+  mAudioElement.play();
+
+  mCamera.position.set(0, 0, 1200);
+});
+mAudioElement.addEventListener("ended", function () {
+  mPlayBtnContainer.style.display = "flex";
+});
 
 window.onload = function () {
   init();
@@ -50,27 +48,33 @@ function init() {
   initParticleSystem();
 
   requestAnimationFrame(tick);
-  window.addEventListener('resize', resize, false);
+  window.addEventListener("resize", resize, false);
 }
-
+// https://github.com/DouglasKyrius/three.js-audiovisualizer/tree/master/src/_audio
 function initAudio() {
   mAudioElement.crossOrigin = "anonymous";
-  mAudioElement.src = 'https://raw.githubusercontent.com/zadvorsky/three.bas/master/examples/_audio/song.mp3';
+  mAudioElement.src =
+    "https://raw.githubusercontent.com/DouglasKyrius/three.js-audiovisualizer/master/src/_audio/donadomeupensamento.mp3";
 
-  mAnalyser = new SpectrumAnalyzer(mPathLength * 0.5, 0.80);
+  mAnalyser = new SpectrumAnalyzer(mPathLength * 0.5, 0.8);
   mAnalyser.setSource(mAudioElement);
 }
 
 function initTHREE() {
-  mRenderer = new THREE.WebGLRenderer({antialias: mUseAA});
+  mRenderer = new THREE.WebGLRenderer({ antialias: mUseAA });
   mRenderer.setSize(window.innerWidth, window.innerHeight);
   //mRenderer.setClearColor(0xffffff);
   mRenderer.setClearColor(mShadowColor);
 
-  mContainer = document.getElementById('three-container');
+  mContainer = document.getElementById("three-container");
   mContainer.appendChild(mRenderer.domElement);
 
-  mCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
+  mCamera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    5000
+  );
   mCamera.position.set(0, 0, 1200);
 
   mScene = new THREE.Scene();
@@ -79,11 +83,11 @@ function initTHREE() {
   mLight.position.set(0, 0, 0);
   mScene.add(mLight);
 
-  mLight2 = new THREE.DirectionalLight(0xFF311F, 0.25);
+  mLight2 = new THREE.DirectionalLight(0xff311f, 0.25);
   mLight2.position.set(0, 1, 1);
   mScene.add(mLight2);
 
-  mLight3 = new THREE.DirectionalLight(0x007A99, 0.25);
+  mLight3 = new THREE.DirectionalLight(0x007a99, 0.25);
   mLight3.position.set(0, 1, -1);
   mScene.add(mLight3);
 }
@@ -93,23 +97,26 @@ function initControls() {
   mControls.autoRotate = true;
   mControls.enableZoom = true;
   mControls.enablePan = false;
-	mControls.constraint.minDistance = 10;
-	mControls.constraint.maxDistance = 1200;
+  mControls.constraint.minDistance = 10;
+  mControls.constraint.maxDistance = 1200;
   mControls.constraint.minPolarAngle = Math.PI * 0.4;
-	mControls.constraint.maxPolarAngle = Math.PI * 0.6;
+  mControls.constraint.maxPolarAngle = Math.PI * 0.6;
 }
 
 function initParticleSystem() {
   var prefabGeometry = new THREE.PlaneGeometry(4, 4);
-  var bufferGeometry = new THREE.BAS.PrefabBufferGeometry(prefabGeometry, mParticleCount);
+  var bufferGeometry = new THREE.BAS.PrefabBufferGeometry(
+    prefabGeometry,
+    mParticleCount
+  );
 
   //bufferGeometry.computeVertexNormals();
 
   // generate additional geometry data
-  var aDelayDuration = bufferGeometry.createAttribute('aDelayDuration', 2);
-  var aPivot = bufferGeometry.createAttribute('aPivot', 3);
-  var aAxisAngle = bufferGeometry.createAttribute('aAxisAngle', 4);
-  var aColor = bufferGeometry.createAttribute('color', 3);
+  var aDelayDuration = bufferGeometry.createAttribute("aDelayDuration", 2);
+  var aPivot = bufferGeometry.createAttribute("aPivot", 3);
+  var aAxisAngle = bufferGeometry.createAttribute("aAxisAngle", 4);
+  var aColor = bufferGeometry.createAttribute("color", 3);
 
   var i, j, offset;
 
@@ -119,9 +126,12 @@ function initParticleSystem() {
   var prefabDelay = 0.00015;
   var vertexDelay = 0.0175;
   var minDuration = 32.0;
-  var maxDuration = 56.5;
+  var maxDuration = 100;
 
-  mDuration = maxDuration + prefabDelay * mParticleCount + vertexDelay * prefabGeometry.vertices.length;
+  mDuration =
+    maxDuration +
+    prefabDelay * mParticleCount +
+    vertexDelay * prefabGeometry.vertices.length;
 
   for (i = 0, offset = 0; i < mParticleCount; i++) {
     delay = i * prefabDelay;
@@ -174,7 +184,7 @@ function initParticleSystem() {
 
   for (i = 0, offset = 0; i < mParticleCount; i++) {
     //h = i / mParticleCount;
-    h = THREE.Math.randFloat(0.5, 1.00);
+    h = THREE.Math.randFloat(0.5, 1.0);
     s = THREE.Math.randFloat(0.5, 0.75);
     l = THREE.Math.randFloat(0.25, 0.5);
 
@@ -198,15 +208,13 @@ function initParticleSystem() {
       x = 0;
       y = -1400;
       z = 0;
-    }
-    else if (!(i - length + 1)) {
+    } else if (!(i - length + 1)) {
       x = 0;
       y = 1200;
       z = 0;
-    }
-    else {
+    } else {
       x = THREE.Math.randFloatSpread(600);
-      y = (-400 + (800 / length) * i) + THREE.Math.randFloatSpread(200);
+      y = -400 + (800 / length) * i + THREE.Math.randFloatSpread(200);
       z = THREE.Math.randFloatSpread(600);
     }
 
@@ -221,68 +229,68 @@ function initParticleSystem() {
       shading: THREE.FlatShading,
       side: THREE.DoubleSide,
       defines: {
-        PATH_LENGTH:pathArray.length / 3
+        PATH_LENGTH: pathArray.length / 3,
       },
       uniforms: {
-        uTime: {type: 'f', value: 0},
-        uPath: {type: 'fv', value: pathArray},
-        uRadius: {type: 'fv1', value: radiusArray},
-        uRoundness: {type: 'v2', value: new THREE.Vector2(2, 2)}
+        uTime: { type: "f", value: 0 },
+        uPath: { type: "fv", value: pathArray },
+        uRadius: { type: "fv1", value: radiusArray },
+        uRoundness: { type: "v2", value: new THREE.Vector2(2, 2) },
       },
       shaderFunctions: [
-        THREE.BAS.ShaderChunk['quaternion_rotation'],
-        THREE.BAS.ShaderChunk['catmull-rom'],
-        THREE.BAS.ShaderChunk['ease_in_out_cubic']
+        THREE.BAS.ShaderChunk["quaternion_rotation"],
+        THREE.BAS.ShaderChunk["catmull-rom"],
+        THREE.BAS.ShaderChunk["ease_in_out_cubic"],
       ],
       shaderParameters: [
-        'uniform float uTime;',
-        'uniform vec3 uPath[PATH_LENGTH];',
-        'uniform float uRadius[PATH_LENGTH];',
-        'uniform vec2 uRoundness;',
-        'attribute vec2 aDelayDuration;',
-        'attribute vec3 aPivot;',
-        'attribute vec4 aAxisAngle;'
+        "uniform float uTime;",
+        "uniform vec3 uPath[PATH_LENGTH];",
+        "uniform float uRadius[PATH_LENGTH];",
+        "uniform vec2 uRoundness;",
+        "attribute vec2 aDelayDuration;",
+        "attribute vec3 aPivot;",
+        "attribute vec4 aAxisAngle;",
       ],
       shaderVertexInit: [
-        'float tDelay = aDelayDuration.x;',
-        'float tDuration = aDelayDuration.y;',
-        'float tTime = clamp(uTime - tDelay, 0.0, tDuration);',
-        'float tProgress = tTime / tDuration;',
+        "float tDelay = aDelayDuration.x;",
+        "float tDuration = aDelayDuration.y;",
+        "float tTime = clamp(uTime - tDelay, 0.0, tDuration);",
+        "float tProgress = tTime / tDuration;",
 
-        'float angle = aAxisAngle.w * tProgress;',
-        'vec4 tQuat = quatFromAxisAngle(aAxisAngle.xyz, angle);'
+        "float angle = aAxisAngle.w * tProgress;",
+        "vec4 tQuat = quatFromAxisAngle(aAxisAngle.xyz, angle);",
       ],
       shaderTransformNormal: [
-        'objectNormal = rotateVector(tQuat, objectNormal);'
+        "objectNormal = rotateVector(tQuat, objectNormal);",
       ],
       shaderTransformPosition: [
-        'float tMax = float(PATH_LENGTH - 1);',
-        'float tPoint = tMax * tProgress;',
-        'float tIndex = floor(tPoint);',
-        'float tWeight = tPoint - tIndex;',
+        "float tMax = float(PATH_LENGTH - 1);",
+        "float tPoint = tMax * tProgress;",
+        "float tIndex = floor(tPoint);",
+        "float tWeight = tPoint - tIndex;",
 
-        'int i0 = int(max(0.0, tIndex - 1.0));',
-        'int i1 = int(tIndex);',
-        'int i2 = int(min(tIndex + 1.0, tMax));',
-        'int i3 = int(min(tIndex + 2.0, tMax));',
-        'vec3 p0 = uPath[i0];',
-        'vec3 p1 = uPath[i1];',
-        'vec3 p2 = uPath[i2];',
-        'vec3 p3 = uPath[i3];',
+        "int i0 = int(max(0.0, tIndex - 1.0));",
+        "int i1 = int(tIndex);",
+        "int i2 = int(min(tIndex + 1.0, tMax));",
+        "int i3 = int(min(tIndex + 2.0, tMax));",
+        "vec3 p0 = uPath[i0];",
+        "vec3 p1 = uPath[i1];",
+        "vec3 p2 = uPath[i2];",
+        "vec3 p3 = uPath[i3];",
 
-        'float radius = catmullRom(uRadius[i0], uRadius[i1], uRadius[i2], uRadius[i3], tWeight);',
-        'transformed += aPivot * radius;',
+        "float radius = catmullRom(uRadius[i0], uRadius[i1], uRadius[i2], uRadius[i3], tWeight);",
+        "transformed += aPivot * radius;",
 
-        'transformed = rotateVector(tQuat, transformed);',
+        "transformed = rotateVector(tQuat, transformed);",
 
-        'transformed += catmullRom(p0, p1, p2, p3, uRoundness, tWeight);'
-      ]
+        "transformed += catmullRom(p0, p1, p2, p3, uRoundness, tWeight);",
+      ],
     },
     // THREE.MeshPhongMaterial uniforms
     {
       shininess: 16,
       specular: 0xffd700,
-      emissive: mShadowColor
+      emissive: mShadowColor,
     }
   );
 
@@ -303,7 +311,7 @@ function update() {
   mControls.update();
   mAnalyser.updateSample();
 
-  var uniform = mParticleSystem.material.uniforms['uRadius'].value;
+  var uniform = mParticleSystem.material.uniforms["uRadius"].value;
   var data = mAnalyser.frequencyByteData;
 
   var dataArray = [];
@@ -316,7 +324,7 @@ function update() {
   }
 
   for (i = cap - 1; i >= 0; i--) {
-  //for (i = 0; i < cap; i++) {
+    //for (i = 0; i < cap; i++) {
     dataArray.push(data[i]);
   }
 
@@ -326,7 +334,7 @@ function update() {
   }
 
   for (i = cap - 1; i >= 0; i--) {
-  //for (i = 0; i < cap; i++) {
+    //for (i = 0; i < cap; i++) {
     dataArray.push(data[i]);
   }
 
@@ -334,22 +342,22 @@ function update() {
     if (i && dataArray.length - i > 1) {
       var val = dataArray[i] / 255;
       uniform[i] = Math.max(1, val * val * val * 48);
-    }
-    else {
+    } else {
       uniform[i] = 128;
     }
   }
 
   var a0 = mAnalyser.getAverageFloat();
   var r = 8 * a0 * a0 * a0 + 1;
-  mParticleSystem.material.uniforms['uRoundness'].value.set(r, r);
+  mParticleSystem.material.uniforms["uRoundness"].value.set(r, r);
 
   var a1 = mAnalyser.getAverageFloat() * 2;
   mLight.intensity = a1 * a1;
   mLight2.intensity = a1 * a1 * a1 * a1 * 0.5;
   mLight3.intensity = a1 * a1 * a1 * a1 * 0.5;
 
-  mParticleSystem.material.uniforms['uTime'].value = mAudioElement.currentTime || 0;
+  mParticleSystem.material.uniforms["uTime"].value =
+    mAudioElement.currentTime || 0;
 }
 
 function render() {
@@ -390,8 +398,8 @@ SpectrumAnalyzer.prototype = {
     this.binCount = binCount;
     this.analyzerNode.fftSize = binCount * 2;
 
-    this.frequencyByteData = new Uint8Array(binCount); 	// frequency
-    this.timeByteData = new Uint8Array(binCount);		// waveform
+    this.frequencyByteData = new Uint8Array(binCount); // frequency
+    this.timeByteData = new Uint8Array(binCount); // waveform
   },
 
   setSmoothingTimeConstant: function (smoothingTimeConstant) {
@@ -417,40 +425,47 @@ SpectrumAnalyzer.prototype = {
 
     return total / (end - start);
   },
-  getAverageFloat:function(index, count) {
+  getAverageFloat: function (index, count) {
     return this.getAverage(index, count) / 255;
   },
 
   updateSample: function () {
     this.analyzerNode.getByteFrequencyData(this.frequencyByteData);
     this.analyzerNode.getByteTimeDomainData(this.timeByteData);
-  }
+  },
 };
 
 ///////////////
-// buffer animation system 
+// buffer animation system
 ///////////////
 
 THREE.BAS = {};
 
 THREE.BAS.ShaderChunk = {};
 
-THREE.BAS.ShaderChunk["animation_time"] = "float tDelay = aAnimation.x;\nfloat tDuration = aAnimation.y;\nfloat tTime = clamp(uTime - tDelay, 0.0, tDuration);\nfloat tProgress = ease(tTime, 0.0, 1.0, tDuration);\n";
+THREE.BAS.ShaderChunk["animation_time"] =
+  "float tDelay = aAnimation.x;\nfloat tDuration = aAnimation.y;\nfloat tTime = clamp(uTime - tDelay, 0.0, tDuration);\nfloat tProgress = ease(tTime, 0.0, 1.0, tDuration);\n";
 
-THREE.BAS.ShaderChunk["catmull-rom"] = "vec3 catmullRom(vec3 p0, vec3 p1, vec3 p2, vec3 p3, float t)\n{\n    vec3 v0 = (p2 - p0) * 0.5;\n    vec3 v1 = (p3 - p1) * 0.5;\n    float t2 = t * t;\n    float t3 = t * t * t;\n\n    return vec3((2.0 * p1 - 2.0 * p2 + v0 + v1) * t3 + (-3.0 * p1 + 3.0 * p2 - 2.0 * v0 - v1) * t2 + v0 * t + p1);\n}\n\nvec3 catmullRom(vec3 p0, vec3 p1, vec3 p2, vec3 p3, vec2 c, float t)\n{\n    vec3 v0 = (p2 - p0) * c.x;\n    vec3 v1 = (p3 - p1) * c.y;\n    float t2 = t * t;\n    float t3 = t * t * t;\n\n    return vec3((2.0 * p1 - 2.0 * p2 + v0 + v1) * t3 + (-3.0 * p1 + 3.0 * p2 - 2.0 * v0 - v1) * t2 + v0 * t + p1);\n}\n\nfloat catmullRom(float p0, float p1, float p2, float p3, float t)\n{\n    float v0 = (p2 - p0) * 0.5;\n    float v1 = (p3 - p1) * 0.5;\n    float t2 = t * t;\n    float t3 = t * t * t;\n\n    return float((2.0 * p1 - 2.0 * p2 + v0 + v1) * t3 + (-3.0 * p1 + 3.0 * p2 - 2.0 * v0 - v1) * t2 + v0 * t + p1);\n}\n\nfloat catmullRom(float p0, float p1, float p2, float p3, vec2 c, float t)\n{\n    float v0 = (p2 - p0) * c.x;\n    float v1 = (p3 - p1) * c.y;\n    float t2 = t * t;\n    float t3 = t * t * t;\n\n    return float((2.0 * p1 - 2.0 * p2 + v0 + v1) * t3 + (-3.0 * p1 + 3.0 * p2 - 2.0 * v0 - v1) * t2 + v0 * t + p1);\n}\n";
+THREE.BAS.ShaderChunk["catmull-rom"] =
+  "vec3 catmullRom(vec3 p0, vec3 p1, vec3 p2, vec3 p3, float t)\n{\n    vec3 v0 = (p2 - p0) * 0.5;\n    vec3 v1 = (p3 - p1) * 0.5;\n    float t2 = t * t;\n    float t3 = t * t * t;\n\n    return vec3((2.0 * p1 - 2.0 * p2 + v0 + v1) * t3 + (-3.0 * p1 + 3.0 * p2 - 2.0 * v0 - v1) * t2 + v0 * t + p1);\n}\n\nvec3 catmullRom(vec3 p0, vec3 p1, vec3 p2, vec3 p3, vec2 c, float t)\n{\n    vec3 v0 = (p2 - p0) * c.x;\n    vec3 v1 = (p3 - p1) * c.y;\n    float t2 = t * t;\n    float t3 = t * t * t;\n\n    return vec3((2.0 * p1 - 2.0 * p2 + v0 + v1) * t3 + (-3.0 * p1 + 3.0 * p2 - 2.0 * v0 - v1) * t2 + v0 * t + p1);\n}\n\nfloat catmullRom(float p0, float p1, float p2, float p3, float t)\n{\n    float v0 = (p2 - p0) * 0.5;\n    float v1 = (p3 - p1) * 0.5;\n    float t2 = t * t;\n    float t3 = t * t * t;\n\n    return float((2.0 * p1 - 2.0 * p2 + v0 + v1) * t3 + (-3.0 * p1 + 3.0 * p2 - 2.0 * v0 - v1) * t2 + v0 * t + p1);\n}\n\nfloat catmullRom(float p0, float p1, float p2, float p3, vec2 c, float t)\n{\n    float v0 = (p2 - p0) * c.x;\n    float v1 = (p3 - p1) * c.y;\n    float t2 = t * t;\n    float t3 = t * t * t;\n\n    return float((2.0 * p1 - 2.0 * p2 + v0 + v1) * t3 + (-3.0 * p1 + 3.0 * p2 - 2.0 * v0 - v1) * t2 + v0 * t + p1);\n}\n";
 
-THREE.BAS.ShaderChunk["cubic_bezier"] = "vec3 cubicBezier(vec3 p0, vec3 c0, vec3 c1, vec3 p1, float t)\n{\n    vec3 tp;\n    float tn = 1.0 - t;\n\n    tp.xyz = tn * tn * tn * p0.xyz + 3.0 * tn * tn * t * c0.xyz + 3.0 * tn * t * t * c1.xyz + t * t * t * p1.xyz;\n\n    return tp;\n}\n";
+THREE.BAS.ShaderChunk["cubic_bezier"] =
+  "vec3 cubicBezier(vec3 p0, vec3 c0, vec3 c1, vec3 p1, float t)\n{\n    vec3 tp;\n    float tn = 1.0 - t;\n\n    tp.xyz = tn * tn * tn * p0.xyz + 3.0 * tn * tn * t * c0.xyz + 3.0 * tn * t * t * c1.xyz + t * t * t * p1.xyz;\n\n    return tp;\n}\n";
 
-THREE.BAS.ShaderChunk["ease_in_cubic"] = "float ease(float t, float b, float c, float d) {\n  return c*(t/=d)*t*t + b;\n}\n";
+THREE.BAS.ShaderChunk["ease_in_cubic"] =
+  "float ease(float t, float b, float c, float d) {\n  return c*(t/=d)*t*t + b;\n}\n";
 
-THREE.BAS.ShaderChunk["ease_in_out_cubic"] = "float ease(float t, float b, float c, float d) {\n  if ((t/=d/2.0) < 1.0) return c/2.0*t*t*t + b;\n  return c/2.0*((t-=2.0)*t*t + 2.0) + b;\n}\n";
+THREE.BAS.ShaderChunk["ease_in_out_cubic"] =
+  "float ease(float t, float b, float c, float d) {\n  if ((t/=d/2.0) < 1.0) return c/2.0*t*t*t + b;\n  return c/2.0*((t-=2.0)*t*t + 2.0) + b;\n}\n";
 
-THREE.BAS.ShaderChunk["ease_in_quad"] = "float ease(float t, float b, float c, float d) {\n  return c*(t/=d)*t + b;\n}\n";
+THREE.BAS.ShaderChunk["ease_in_quad"] =
+  "float ease(float t, float b, float c, float d) {\n  return c*(t/=d)*t + b;\n}\n";
 
-THREE.BAS.ShaderChunk["ease_out_cubic"] = "float ease(float t, float b, float c, float d) {\n  return c*((t=t/d - 1.0)*t*t + 1.0) + b;\n}\n";
+THREE.BAS.ShaderChunk["ease_out_cubic"] =
+  "float ease(float t, float b, float c, float d) {\n  return c*((t=t/d - 1.0)*t*t + 1.0) + b;\n}\n";
 
-THREE.BAS.ShaderChunk["quaternion_rotation"] = "vec3 rotateVector(vec4 q, vec3 v)\n{\n    return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);\n}\n\nvec4 quatFromAxisAngle(vec3 axis, float angle)\n{\n    float halfAngle = angle * 0.5;\n    return vec4(axis.xyz * sin(halfAngle), cos(halfAngle));\n}\n";
-
+THREE.BAS.ShaderChunk["quaternion_rotation"] =
+  "vec3 rotateVector(vec4 q, vec3 v)\n{\n    return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);\n}\n\nvec4 quatFromAxisAngle(vec3 axis, float angle)\n{\n    float halfAngle = angle * 0.5;\n    return vec4(axis.xyz * sin(halfAngle), cos(halfAngle));\n}\n";
 
 THREE.BAS.PrefabBufferGeometry = function (prefab, count) {
   THREE.BufferGeometry.call(this);
@@ -461,13 +476,17 @@ THREE.BAS.PrefabBufferGeometry = function (prefab, count) {
 
   this.bufferDefaults();
 };
-THREE.BAS.PrefabBufferGeometry.prototype = Object.create(THREE.BufferGeometry.prototype);
-THREE.BAS.PrefabBufferGeometry.prototype.constructor = THREE.BAS.PrefabBufferGeometry;
+THREE.BAS.PrefabBufferGeometry.prototype = Object.create(
+  THREE.BufferGeometry.prototype
+);
+THREE.BAS.PrefabBufferGeometry.prototype.constructor =
+  THREE.BAS.PrefabBufferGeometry;
 
 THREE.BAS.PrefabBufferGeometry.prototype.bufferDefaults = function () {
   var prefabFaceCount = this.prefabGeometry.faces.length;
   var prefabIndexCount = this.prefabGeometry.faces.length * 3;
-  var prefabVertexCount = this.prefabVertexCount = this.prefabGeometry.vertices.length;
+  var prefabVertexCount = (this.prefabVertexCount =
+    this.prefabGeometry.vertices.length);
   var prefabIndices = [];
 
   //console.log('prefabCount', this.prefabCount);
@@ -482,30 +501,34 @@ THREE.BAS.PrefabBufferGeometry.prototype.bufferDefaults = function () {
   }
 
   var indexBuffer = new Uint32Array(this.prefabCount * prefabIndexCount);
-  var positionBuffer = new Float32Array(this.prefabCount * prefabVertexCount * 3);
+  var positionBuffer = new Float32Array(
+    this.prefabCount * prefabVertexCount * 3
+  );
 
   this.setIndex(new THREE.BufferAttribute(indexBuffer, 1));
-  this.addAttribute('position', new THREE.BufferAttribute(positionBuffer, 3));
+  this.addAttribute("position", new THREE.BufferAttribute(positionBuffer, 3));
 
   for (var i = 0, offset = 0; i < this.prefabCount; i++) {
     for (var j = 0; j < prefabVertexCount; j++, offset += 3) {
       var prefabVertex = this.prefabGeometry.vertices[j];
 
-      positionBuffer[offset    ] = prefabVertex.x;
+      positionBuffer[offset] = prefabVertex.x;
       positionBuffer[offset + 1] = prefabVertex.y;
       positionBuffer[offset + 2] = prefabVertex.z;
     }
 
     for (var k = 0; k < prefabIndexCount; k++) {
-      indexBuffer[i * prefabIndexCount + k] = prefabIndices[k] + i * prefabVertexCount;
+      indexBuffer[i * prefabIndexCount + k] =
+        prefabIndices[k] + i * prefabVertexCount;
     }
   }
 };
 
 // todo test
-THREE.BAS.PrefabBufferGeometry.prototype.bufferUvs = function() {
+THREE.BAS.PrefabBufferGeometry.prototype.bufferUvs = function () {
   var prefabFaceCount = this.prefabGeometry.faces.length;
-  var prefabVertexCount = this.prefabVertexCount = this.prefabGeometry.vertices.length;
+  var prefabVertexCount = (this.prefabVertexCount =
+    this.prefabGeometry.vertices.length);
   var prefabUvs = [];
 
   for (var h = 0; h < prefabFaceCount; h++) {
@@ -517,7 +540,7 @@ THREE.BAS.PrefabBufferGeometry.prototype.bufferUvs = function() {
     prefabUvs[face.c] = uv[2];
   }
 
-  var uvBuffer = this.createAttribute('uv', 2);
+  var uvBuffer = this.createAttribute("uv", 2);
 
   for (var i = 0, offset = 0; i < this.prefabCount; i++) {
     for (var j = 0; j < prefabVertexCount; j++, offset += 2) {
@@ -539,19 +562,22 @@ THREE.BAS.PrefabBufferGeometry.prototype.computeVertexNormals = function () {
   var positions = attributes.position.array;
 
   if (attributes.normal === undefined) {
-    this.addAttribute('normal', new THREE.BufferAttribute(new Float32Array(positions.length), 3));
+    this.addAttribute(
+      "normal",
+      new THREE.BufferAttribute(new Float32Array(positions.length), 3)
+    );
   }
 
   var normals = attributes.normal.array;
 
-  var vA, vB, vC,
-
-  pA = new THREE.Vector3(),
-  pB = new THREE.Vector3(),
-  pC = new THREE.Vector3(),
-
-  cb = new THREE.Vector3(),
-  ab = new THREE.Vector3();
+  var vA,
+    vB,
+    vC,
+    pA = new THREE.Vector3(),
+    pB = new THREE.Vector3(),
+    pC = new THREE.Vector3(),
+    cb = new THREE.Vector3(),
+    ab = new THREE.Vector3();
 
   var indices = index.array;
   var prefabIndexCount = this.prefabGeometry.faces.length * 3;
@@ -593,8 +619,13 @@ THREE.BAS.PrefabBufferGeometry.prototype.computeVertexNormals = function () {
   attributes.normal.needsUpdate = true;
 };
 
-THREE.BAS.PrefabBufferGeometry.prototype.createAttribute = function (name, itemSize) {
-  var buffer = new Float32Array(this.prefabCount * this.prefabVertexCount * itemSize);
+THREE.BAS.PrefabBufferGeometry.prototype.createAttribute = function (
+  name,
+  itemSize
+) {
+  var buffer = new Float32Array(
+    this.prefabCount * this.prefabVertexCount * itemSize
+  );
   var attribute = new THREE.BufferAttribute(buffer, itemSize);
 
   this.addAttribute(name, attribute);
@@ -665,30 +696,33 @@ THREE.BAS.BaseAnimationMaterial = function (parameters) {
 
   this.setValues(parameters);
 };
-THREE.BAS.BaseAnimationMaterial.prototype = Object.create(THREE.ShaderMaterial.prototype);
-THREE.BAS.BaseAnimationMaterial.prototype.constructor = THREE.BAS.BaseAnimationMaterial;
+THREE.BAS.BaseAnimationMaterial.prototype = Object.create(
+  THREE.ShaderMaterial.prototype
+);
+THREE.BAS.BaseAnimationMaterial.prototype.constructor =
+  THREE.BAS.BaseAnimationMaterial;
 
 // abstract
 THREE.BAS.BaseAnimationMaterial.prototype._concatVertexShader = function () {
-  return '';
+  return "";
 };
 
 THREE.BAS.BaseAnimationMaterial.prototype._concatFunctions = function () {
-  return this.shaderFunctions.join('\n');
+  return this.shaderFunctions.join("\n");
 };
 THREE.BAS.BaseAnimationMaterial.prototype._concatParameters = function () {
-  return this.shaderParameters.join('\n');
+  return this.shaderParameters.join("\n");
 };
 THREE.BAS.BaseAnimationMaterial.prototype._concatVertexInit = function () {
-  return this.shaderVertexInit.join('\n');
+  return this.shaderVertexInit.join("\n");
 };
 THREE.BAS.BaseAnimationMaterial.prototype._concatTransformNormal = function () {
-  return this.shaderTransformNormal.join('\n');
+  return this.shaderTransformNormal.join("\n");
 };
-THREE.BAS.BaseAnimationMaterial.prototype._concatTransformPosition = function () {
-  return this.shaderTransformPosition.join('\n');
-};
-
+THREE.BAS.BaseAnimationMaterial.prototype._concatTransformPosition =
+  function () {
+    return this.shaderTransformPosition.join("\n");
+  };
 
 THREE.BAS.BaseAnimationMaterial.prototype.setUniformValues = function (values) {
   for (var key in values) {
@@ -698,16 +732,16 @@ THREE.BAS.BaseAnimationMaterial.prototype.setUniformValues = function (values) {
 
       // todo add matrix uniform types
       switch (uniform.type) {
-        case 'c': // color
+        case "c": // color
           uniform.value.set(value);
           break;
-        case 'v2': // vectors
-        case 'v3':
-        case 'v4':
+        case "v2": // vectors
+        case "v3":
+        case "v4":
           uniform.value.copy(value);
           break;
-        case 'f': // float
-        case 't': // texture
+        case "f": // float
+        case "t": // texture
         default:
           uniform.value = value;
       }
@@ -715,94 +749,99 @@ THREE.BAS.BaseAnimationMaterial.prototype.setUniformValues = function (values) {
   }
 };
 
-THREE.BAS.PhongAnimationMaterial = function(parameters, uniformValues) {
-    THREE.BAS.BaseAnimationMaterial.call(this, parameters);
+THREE.BAS.PhongAnimationMaterial = function (parameters, uniformValues) {
+  THREE.BAS.BaseAnimationMaterial.call(this, parameters);
 
-    var phongShader = THREE.ShaderLib['phong'];
+  var phongShader = THREE.ShaderLib["phong"];
 
-    this.uniforms = THREE.UniformsUtils.merge([phongShader.uniforms, this.uniforms]);
-    this.lights = true;
-    this.vertexShader = this._concatVertexShader();
-    this.fragmentShader = phongShader.fragmentShader;
+  this.uniforms = THREE.UniformsUtils.merge([
+    phongShader.uniforms,
+    this.uniforms,
+  ]);
+  this.lights = true;
+  this.vertexShader = this._concatVertexShader();
+  this.fragmentShader = phongShader.fragmentShader;
 
-    // todo add missing default defines
-    uniformValues.map && (this.defines['USE_MAP'] = '');
-    uniformValues.normalMap && (this.defines['USE_NORMALMAP'] = '');
+  // todo add missing default defines
+  uniformValues.map && (this.defines["USE_MAP"] = "");
+  uniformValues.normalMap && (this.defines["USE_NORMALMAP"] = "");
 
-    this.setUniformValues(uniformValues);
+  this.setUniformValues(uniformValues);
 };
-THREE.BAS.PhongAnimationMaterial.prototype = Object.create(THREE.BAS.BaseAnimationMaterial.prototype);
-THREE.BAS.PhongAnimationMaterial.prototype.constructor = THREE.BAS.PhongAnimationMaterial;
+THREE.BAS.PhongAnimationMaterial.prototype = Object.create(
+  THREE.BAS.BaseAnimationMaterial.prototype
+);
+THREE.BAS.PhongAnimationMaterial.prototype.constructor =
+  THREE.BAS.PhongAnimationMaterial;
 
-THREE.BAS.PhongAnimationMaterial.prototype._concatVertexShader = function() {
-    // based on THREE.ShaderLib.phong
-    return [
-        "#define PHONG",
+THREE.BAS.PhongAnimationMaterial.prototype._concatVertexShader = function () {
+  // based on THREE.ShaderLib.phong
+  return [
+    "#define PHONG",
 
-        "varying vec3 vViewPosition;",
+    "varying vec3 vViewPosition;",
 
-        "#ifndef FLAT_SHADED",
+    "#ifndef FLAT_SHADED",
 
-        "	varying vec3 vNormal;",
+    "	varying vec3 vNormal;",
 
-        "#endif",
+    "#endif",
 
-        THREE.ShaderChunk[ "common" ],
-        THREE.ShaderChunk[ "uv_pars_vertex" ],
-        THREE.ShaderChunk[ "uv2_pars_vertex" ],
-        THREE.ShaderChunk[ "displacementmap_pars_vertex" ],
-        THREE.ShaderChunk[ "envmap_pars_vertex" ],
-        THREE.ShaderChunk[ "lights_phong_pars_vertex" ],
-        THREE.ShaderChunk[ "color_pars_vertex" ],
-        THREE.ShaderChunk[ "morphtarget_pars_vertex" ],
-        THREE.ShaderChunk[ "skinning_pars_vertex" ],
-        THREE.ShaderChunk[ "shadowmap_pars_vertex" ],
-        THREE.ShaderChunk[ "logdepthbuf_pars_vertex" ],
+    THREE.ShaderChunk["common"],
+    THREE.ShaderChunk["uv_pars_vertex"],
+    THREE.ShaderChunk["uv2_pars_vertex"],
+    THREE.ShaderChunk["displacementmap_pars_vertex"],
+    THREE.ShaderChunk["envmap_pars_vertex"],
+    THREE.ShaderChunk["lights_phong_pars_vertex"],
+    THREE.ShaderChunk["color_pars_vertex"],
+    THREE.ShaderChunk["morphtarget_pars_vertex"],
+    THREE.ShaderChunk["skinning_pars_vertex"],
+    THREE.ShaderChunk["shadowmap_pars_vertex"],
+    THREE.ShaderChunk["logdepthbuf_pars_vertex"],
 
-        this._concatFunctions(),
+    this._concatFunctions(),
 
-        this._concatParameters(),
+    this._concatParameters(),
 
-        "void main() {",
+    "void main() {",
 
-        this._concatVertexInit(),
+    this._concatVertexInit(),
 
-        THREE.ShaderChunk[ "uv_vertex" ],
-        THREE.ShaderChunk[ "uv2_vertex" ],
-        THREE.ShaderChunk[ "color_vertex" ],
-        THREE.ShaderChunk[ "beginnormal_vertex" ],
+    THREE.ShaderChunk["uv_vertex"],
+    THREE.ShaderChunk["uv2_vertex"],
+    THREE.ShaderChunk["color_vertex"],
+    THREE.ShaderChunk["beginnormal_vertex"],
 
-        this._concatTransformNormal(),
+    this._concatTransformNormal(),
 
-        THREE.ShaderChunk[ "morphnormal_vertex" ],
-        THREE.ShaderChunk[ "skinbase_vertex" ],
-        THREE.ShaderChunk[ "skinnormal_vertex" ],
-        THREE.ShaderChunk[ "defaultnormal_vertex" ],
+    THREE.ShaderChunk["morphnormal_vertex"],
+    THREE.ShaderChunk["skinbase_vertex"],
+    THREE.ShaderChunk["skinnormal_vertex"],
+    THREE.ShaderChunk["defaultnormal_vertex"],
 
-        "#ifndef FLAT_SHADED", // Normal computed with derivatives when FLAT_SHADED
+    "#ifndef FLAT_SHADED", // Normal computed with derivatives when FLAT_SHADED
 
-        "	vNormal = normalize( transformedNormal );",
+    "	vNormal = normalize( transformedNormal );",
 
-        "#endif",
+    "#endif",
 
-        THREE.ShaderChunk[ "begin_vertex" ],
+    THREE.ShaderChunk["begin_vertex"],
 
-        this._concatTransformPosition(),
+    this._concatTransformPosition(),
 
-        THREE.ShaderChunk[ "displacementmap_vertex" ],
-        THREE.ShaderChunk[ "morphtarget_vertex" ],
-        THREE.ShaderChunk[ "skinning_vertex" ],
-        THREE.ShaderChunk[ "project_vertex" ],
-        THREE.ShaderChunk[ "logdepthbuf_vertex" ],
+    THREE.ShaderChunk["displacementmap_vertex"],
+    THREE.ShaderChunk["morphtarget_vertex"],
+    THREE.ShaderChunk["skinning_vertex"],
+    THREE.ShaderChunk["project_vertex"],
+    THREE.ShaderChunk["logdepthbuf_vertex"],
 
-        "	vViewPosition = - mvPosition.xyz;",
+    "	vViewPosition = - mvPosition.xyz;",
 
-        THREE.ShaderChunk[ "worldpos_vertex" ],
-        THREE.ShaderChunk[ "envmap_vertex" ],
-        THREE.ShaderChunk[ "lights_phong_vertex" ],
-        THREE.ShaderChunk[ "shadowmap_vertex" ],
+    THREE.ShaderChunk["worldpos_vertex"],
+    THREE.ShaderChunk["envmap_vertex"],
+    THREE.ShaderChunk["lights_phong_vertex"],
+    THREE.ShaderChunk["shadowmap_vertex"],
 
-        "}"
-
-    ].join( "\n" );
+    "}",
+  ].join("\n");
 };
